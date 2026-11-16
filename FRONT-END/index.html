@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oficina • Agendamentos</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- LOGIN / CADASTRO -->
+  <section id="tela-login" class="login">
+    <form id="form-login" class="card login-card">
+      <h1>🔧 Oficina</h1>
+      <p class="sub" id="login-sub">Entre para gerenciar os agendamentos</p>
+
+      <label class="campo-nome oculto">Nome
+        <input type="text" id="login-nome" autocomplete="name">
+      </label>
+      <label>E-mail
+        <input type="email" id="login-email" required autocomplete="email">
+      </label>
+      <label>Senha
+        <input type="password" id="login-senha" required autocomplete="current-password">
+      </label>
+
+      <p id="login-erro" class="erro oculto"></p>
+      <button type="submit" class="btn" id="login-btn">Entrar</button>
+      <button type="button" class="link" id="login-alternar">Não tem conta? Cadastre-se</button>
+    </form>
+  </section>
+
+  <!-- APLICAÇÃO -->
+  <div id="tela-app" class="oculto">
+    <header class="topo">
+      <strong>🔧 Oficina</strong>
+      <nav>
+        <button class="aba ativa" data-aba="agendamentos">Agendamentos</button>
+        <button class="aba" data-aba="clientes">Clientes</button>
+        <button class="aba" data-aba="veiculos">Veículos</button>
+      </nav>
+      <div class="usuario">
+        <span id="usuario-nome"></span>
+        <button class="btn btn-sec" id="btn-sair">Sair</button>
+      </div>
+    </header>
+
+    <main>
+      <div class="barra">
+        <h2 id="titulo-aba">Agendamentos</h2>
+        <input type="search" id="busca" placeholder="Buscar...">
+        <button class="btn" id="btn-novo">+ Novo</button>
+      </div>
+      <div class="card tabela-wrap">
+        <table>
+          <thead id="thead"></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+        <p id="vazio" class="vazio oculto">Nenhum registro encontrado.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- MODAL -->
+  <dialog id="modal">
+    <form id="form-modal" method="dialog">
+      <h3 id="modal-titulo"></h3>
+      <div id="modal-campos"></div>
+      <p id="modal-erro" class="erro oculto"></p>
+      <div class="acoes">
+        <button type="button" class="btn btn-sec" id="modal-cancelar">Cancelar</button>
+        <button type="submit" class="btn">Salvar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="toast" class="toast oculto"></div>
+  <script src="app.js"></script>
+</body>
+</html>
