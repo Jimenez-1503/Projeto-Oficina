@@ -1,42 +1,78 @@
+
 const agendamentoService = require('../services/agendamentoService');
 
 class AgendamentoController {
+
   async listar(req, res) {
     try {
       const agendamentos = await agendamentoService.listarTodos();
+
       return res.status(200).json(agendamentos);
+
     } catch (err) {
-      return res.status(500).json({ mensagem: 'Erro ao listar agendamentos' });
+      console.error('Erro ao listar agendamentos:', err);
+
+      return res.status(500).json({
+        mensagem: 'Erro ao listar agendamentos'
+      });
     }
   }
 
   async criar(req, res) {
     try {
       const novoAgendamento = await agendamentoService.criar(req.body);
-      return res.status(201).json(novoAgendamento);
+
+      return res.status(201).json({
+        mensagem: 'Agendamento cadastrado com sucesso!',
+        agendamento: novoAgendamento
+      });
+
     } catch (err) {
-      return res.status(err.status || 500).json({ mensagem: err.mensagem || 'Erro ao cadastrar agendamento' });
+      console.error('Erro ao cadastrar agendamento:', err);
+
+      return res.status(err.status || 500).json({
+        mensagem: err.mensagem || 'Erro ao cadastrar agendamento'
+      });
     }
   }
 
-  async atualizarData(req, res) {
+  async atualizar(req, res) {
     try {
       const { id } = req.params;
-      const { data_agendamento } = req.body;
-      await agendamentoService.atualizarData(id, data_agendamento);
-      return res.status(200).json({ mensagem: 'Data alterada com sucesso' });
+
+      const agendamentoAtualizado =
+        await agendamentoService.atualizar(id, req.body);
+
+      return res.status(200).json({
+        mensagem: 'Agendamento atualizado com sucesso!',
+        agendamento: agendamentoAtualizado
+      });
+
     } catch (err) {
-      return res.status(err.status || 500).json({ mensagem: err.mensagem || 'Erro ao atualizar data do agendamento' });
+      console.error('Erro ao atualizar agendamento:', err);
+
+      return res.status(err.status || 500).json({
+        mensagem: err.mensagem || 'Erro ao atualizar agendamento'
+      });
     }
   }
 
   async deletar(req, res) {
     try {
       const { id } = req.params;
+
       await agendamentoService.deletar(id);
-      return res.status(204).send();
+
+      return res.status(200).json({
+        mensagem: 'Agendamento excluído com sucesso!'
+      });
+
     } catch (err) {
-      return res.status(err.status || 500).json({ mensagem: err.mensagem || 'Erro ao remover agendamento' });
+      console.error('Erro ao excluir agendamento:', err);
+
+      return res.status(err.status || 500).json({
+        mensagem: err.mensagem || 'Erro ao excluir agendamento'
+      });
     }
   }
 }

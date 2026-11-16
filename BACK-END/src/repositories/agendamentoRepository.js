@@ -1,9 +1,10 @@
+
 const db = require('../config/database');
 
 class AgendamentoRepository {
   async findAllWithDetails() {
     const sql = `
-      SELECT 
+      SELECT
         a.id_agendamento,
         a.tipo_agendamento,
         a.data_agendamento,
@@ -16,37 +17,100 @@ class AgendamentoRepository {
         v.nome_modelo AS modelo_veiculo,
         v.placa AS placa_veiculo
       FROM Agendamentos a
-      INNER JOIN Clientes c ON a.id_cliente = c.id_cliente
-      INNER JOIN Veiculos v ON a.id_veiculo = v.id_veiculo
-      ORDER BY a.data_agendamento ASC, a.horario_agendamento ASC
+      INNER JOIN Clientes c
+        ON a.id_cliente = c.id_cliente
+      INNER JOIN Veiculos v
+        ON a.id_veiculo = v.id_veiculo
+      ORDER BY
+        a.data_agendamento ASC,
+        a.horario_agendamento ASC
     `;
+
     const [rows] = await db.query(sql);
     return rows;
   }
 
   async findById(id) {
-    const [rows] = await db.query('SELECT * FROM Agendamentos WHERE id_agendamento = ?', [id]);
+    const [rows] = await db.query(
+      'SELECT * FROM Agendamentos WHERE id_agendamento = ?',
+      [id]
+    );
+
     return rows[0];
   }
 
   async create(agendamento) {
-    const { id_cliente, tipo_agendamento, data_agendamento, local_agendamento, horario_agendamento, id_veiculo } = agendamento;
+    const {
+      id_cliente,
+      tipo_agendamento,
+      data_agendamento,
+      local_agendamento,
+      horario_agendamento,
+      id_veiculo
+    } = agendamento;
+
     const [result] = await db.query(
-      'INSERT INTO Agendamentos (id_cliente, tipo_agendamento, data_agendamento, local_agendamento, horario_agendamento, id_veiculo) VALUES (?, ?, ?, ?, ?, ?)',
-      [id_cliente, tipo_agendamento, data_agendamento, local_agendamento, horario_agendamento, id_veiculo]
+      `INSERT INTO Agendamentos (
+        id_cliente,
+        tipo_agendamento,
+        data_agendamento,
+        local_agendamento,
+        horario_agendamento,
+        id_veiculo
+      ) VALUES (?, ?, ?, ?, ?, ?)`,
+      [
+        id_cliente,
+        tipo_agendamento,
+        data_agendamento,
+        local_agendamento,
+        horario_agendamento,
+        id_veiculo
+      ]
     );
+
     return result.insertId;
   }
 
-  async updateData(id, data_agendamento) {
-    await db.query(
-      'UPDATE Agendamentos SET data_agendamento = ? WHERE id_agendamento = ?',
-      [data_agendamento, id]
+  async update(id, agendamento) {
+    const {
+      tipo_agendamento,
+      data_agendamento,
+      horario_agendamento,
+      local_agendamento,
+      id_cliente,
+      id_veiculo
+    } = agendamento;
+
+    const [result] = await db.query(
+      `UPDATE Agendamentos SET
+        tipo_agendamento = ?,
+        data_agendamento = ?,
+        horario_agendamento = ?,
+        local_agendamento = ?,
+        id_cliente = ?,
+        id_veiculo = ?
+      WHERE id_agendamento = ?`,
+      [
+        tipo_agendamento,
+        data_agendamento,
+        horario_agendamento,
+        local_agendamento,
+        id_cliente,
+        id_veiculo,
+        id
+      ]
     );
+
+    return result.affectedRows;
   }
 
   async delete(id) {
-    await db.query('DELETE FROM Agendamentos WHERE id_agendamento = ?', [id]);
+    const [result] = await db.query(
+      'DELETE FROM Agendamentos WHERE id_agendamento = ?',
+      [id]
+    );
+
+    return result.affectedRows;
   }
 }
 
