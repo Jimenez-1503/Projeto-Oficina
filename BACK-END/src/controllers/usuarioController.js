@@ -6,7 +6,11 @@ class UsuarioController {
       const novoUsuario = await usuarioService.cadastrar(req.body);
       return res.status(201).json(novoUsuario);
     } catch (error) {
-      return res.status(400).json({ erro: error.message });
+      if (!error.status) {
+        console.error('Erro ao cadastrar usuário:', error);
+        return res.status(500).json({ erro: 'Erro interno ao cadastrar. Veja o terminal do servidor.' });
+      }
+      return res.status(error.status).json({ erro: error.message });
     }
   }
 

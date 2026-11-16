@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const usuarioRepository = require('../repositories/usuarioRepository');
 
@@ -7,12 +7,12 @@ const SECRET_KEY = process.env.JWT_SECRET || 'sua_chave_secreta_aqui';
 class UsuarioService {
   async cadastrar({ nome, email, senha }) {
     if (!nome || !email || !senha) {
-      throw new Error('Nome, e-mail e senha são obrigatórios.');
+      throw Object.assign(new Error('Nome, e-mail e senha são obrigatórios.'), { status: 400 });
     }
 
     const usuarioExistente = await usuarioRepository.findByEmail(email);
     if (usuarioExistente) {
-      throw new Error('Este e-mail já está cadastrado.');
+      throw Object.assign(new Error('Este e-mail já está cadastrado.'), { status: 409 });
     }
 
     const senhaHash = await bcrypt.hash(senha, 10);

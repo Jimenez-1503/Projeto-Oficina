@@ -1,5 +1,13 @@
-// Se abrir o index.html direto do disco, aponta para a API local; servido pelo Express usa a mesma origem.
-const API = location.protocol === 'file:' ? 'http://localhost:3000' : '';
+let API = 'http://localhost:3000';
+const apiPronta = (async () => {
+  const candidatos = location.protocol === 'file:' ? ['http://localhost:3000'] : ['', 'http://localhost:3000'];
+  for (const base of candidatos) {
+    try {
+      const r = await fetch(base + '/status-api');
+      if (r.ok && (await r.json()).api === 'oficina') { API = base; return; }
+    } catch { /* tenta o próximo */ }
+  }
+})();
 
 const $ = (s) => document.querySelector(s);
 const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -11,6 +19,7 @@ let editando = null;
 
 /* ---------- API ---------- */
 async function api(metodo, url, corpo) {
+  await apiPronta;
   const res = await fetch(API + url, {
     method: metodo,
     headers: {
@@ -23,7 +32,10 @@ async function api(metodo, url, corpo) {
   const texto = await res.text();
   let json = null;
   try { json = texto ? JSON.parse(texto) : null; } catch { /* resposta sem JSON */ }
-  if (!res.ok) throw new Error(json?.mensagem || json?.erro || `Erro ${res.status}`);
+  if (!res.ok) {
+    const detalhe = json?.mensagem || json?.erro;
+    throw new Error(detalhe || `Erro ${res.status} em ${metodo} ${res.url} — a API da oficina não respondeu nesse endereço. Abra o site por http://localhost:3000 com o servidor rodando.`);
+  }
   return json;
 }
 

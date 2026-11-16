@@ -10,9 +10,6 @@ class AuthService {
 
     const usuario = await usuarioRepository.findByEmail(email);
 
-    // Linha de diagnóstico (remova em produção)
-    console.log('Utilizador encontrado na BD:', usuario);
-
     const senhaValida = usuario ? await bcrypt.compare(senha, usuario.senha) : false;
 
     if (!senhaValida) {
@@ -20,7 +17,7 @@ class AuthService {
     }
 
     const token = jwt.sign(
-      { id: usuario.id, email: usuario.email },
+      { id: usuario.id_usuario, email: usuario.email },
       process.env.JWT_SECRET, // Certifique-se de ter essa variável configurada
       { expiresIn: '1d' }
     );
